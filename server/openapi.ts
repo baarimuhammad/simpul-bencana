@@ -53,6 +53,7 @@ const alertSchema = {
     "created",
     "message",
     "channels",
+    "evidence",
   ],
   properties: {
     id: { type: "string" },
@@ -61,6 +62,24 @@ const alertSchema = {
     probability: { type: "number", minimum: 0, maximum: 1 },
     status: { enum: ["draft", "verified", "sent"] },
     verifiedBy: { enum: ["admin", "bpbd"] },
+    review: {
+      type: "object",
+      required: ["dataChecked", "areaChecked", "messageChecked"],
+      properties: {
+        dataChecked: { type: "boolean" },
+        areaChecked: { type: "boolean" },
+        messageChecked: { type: "boolean" },
+      },
+    },
+    evidence: {
+      type: "object",
+      required: ["inputs", "factors", "sourceStatus"],
+      properties: {
+        inputs: { $ref: "#/components/schemas/Inputs" },
+        factors: { type: "array", items: { type: "object" } },
+        sourceStatus: { enum: ["fixture"] },
+      },
+    },
     created: { type: "string" },
     message: { type: "string" },
     channels: { type: "array", items: { type: "object" } },
@@ -197,9 +216,20 @@ export const openapi = {
       ["admin", "bpbd"],
     ),
     "/alerts/verify": post(
-      "Verifikasi draf peringatan oleh manusia",
-      { alert: { $ref: "#/components/schemas/Alert" } },
-      ["basinId", "alert"],
+      "Verifikasi draf peringatan setelah pemeriksaan manusia",
+      {
+        alert: { $ref: "#/components/schemas/Alert" },
+        review: {
+          type: "object",
+          required: ["dataChecked", "areaChecked", "messageChecked"],
+          properties: {
+            dataChecked: { type: "boolean", const: true },
+            areaChecked: { type: "boolean", const: true },
+            messageChecked: { type: "boolean", const: true },
+          },
+        },
+      },
+      ["basinId", "alert", "review"],
       ["admin", "bpbd"],
     ),
     "/disseminate": post(

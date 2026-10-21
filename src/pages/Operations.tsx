@@ -34,7 +34,13 @@ import {
   Stat,
   Step,
 } from "../components/UI";
-import type { Alert, CitizenReport, Page, ReportKind } from "../shared/types";
+import {
+  ROLE_NAMES,
+  type Alert,
+  type CitizenReport,
+  type Page,
+  type ReportKind,
+} from "../shared/types";
 export default function Operations({
   page,
   go,
@@ -249,6 +255,11 @@ function Warnings() {
   const [chosen, setChosen] = useState("");
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState("Pesan");
+  const [review, setReview] = useState({
+    dataChecked: false,
+    areaChecked: false,
+    messageChecked: false,
+  });
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const pdfLines = state.alerts.flatMap((a) => [
     `${a.id} | DAS ${BASINS.find((b) => b.id === a.basinId)?.name} | ${a.level} | ${a.status}`,
@@ -278,12 +289,19 @@ function Warnings() {
           alert: action === "retry" ? { ...alert, status: "verified" } : alert,
           mode: state.mode,
           retry: action === "retry",
+          ...(action === "verify" ? { review } : {}),
         },
       );
       updateAlert(r.alert);
+      if (action === "verify")
+        setReview({
+          dataChecked: false,
+          areaChecked: false,
+          messageChecked: false,
+        });
       notify(
         action === "verify"
-          ? "Peringatan diverifikasi oleh operator demo."
+          ? "Tiga pemeriksaan dicatat; peringatan diverifikasi oleh peran demo."
           : action === "retry"
             ? "Kanal radio berhasil disimulasikan ulang."
             : "Simulasi multikanal selesai. Radio perlu dicoba ulang; kanal lain berhasil.",
@@ -372,7 +390,14 @@ function Warnings() {
             <button
               className={`alert-list-item ${a.id === alert?.id ? "selected" : ""}`}
               key={a.id}
-              onClick={() => setChosen(a.id)}
+              onClick={() => {
+                setChosen(a.id);
+                setReview({
+                  dataChecked: false,
+                  areaChecked: false,
+                  messageChecked: false,
+                });
+              }}
             >
               <div>
                 <strong>
@@ -399,7 +424,7 @@ function Warnings() {
           >
             <div className="alert-workflow">
               <span className="done">
-                <Check size={13} /> Analisis
+                <Check size={13} /> Rekomendasi model
               </span>
               <ChevronArrow />
               <span className={alert.status !== "draft" ? "done" : ""}>
@@ -407,8 +432,31 @@ function Warnings() {
               </span>
               <ChevronArrow />
               <span className={alert.status === "sent" ? "done" : ""}>
-                <Radio size={13} /> Diseminasi simulasi
+                <Radio size={13} /> Kanal simulasi → warga
               </span>
+            </div>
+            <div className="ews-evidence">
+              <div>
+                <strong>Dasar rekomendasi · snapshot draf</strong>
+                <p>
+                  {alert.level} ({pct(alert.probability)} simulasi). Input:
+                  hujan {alert.evidence.inputs.rain} mm, degradasi hulu{" "}
+                  {alert.evidence.inputs.forestLoss}%, lereng{" "}
+                  {alert.evidence.inputs.slope}°, muka air{" "}
+                  {alert.evidence.inputs.water} cm.
+                </p>
+                <small>
+                  Kontributor skor:{" "}
+                  {alert.evidence.factors
+                    .slice()
+                    .sort((a, b) => b.contribution - a.contribution)
+                    .slice(0, 2)
+                    .map((f) => f.label)
+                    .join(" dan ")}
+                  . Seluruhnya fixture; tidak ada telemetri instansi.
+                </small>
+              </div>
+              <span className="count-pill">REKOMENDASI · BELUM KEPUTUSAN</span>
             </div>
             <div className="tab-row">
               {["Pesan", "CAP JSON", "Kanal pengiriman"].map((p) => (
@@ -468,7 +516,7 @@ function Warnings() {
                     Keputusan{" "}
                     <strong>
                       {alert.verifiedBy
-                        ? "Operator demo terverifikasi"
+                        ? `${ROLE_NAMES[alert.verifiedBy]} (demo)`
                         : "Menunggu manusia"}
                     </strong>
                   </span>
@@ -488,11 +536,49 @@ function Warnings() {
                 Diseminasi diblokir oleh UI dan API.
               </Note>
             )}
+            {alert.status === "draft" && permission && (
+              <fieldset className="review-checklist">
+                <legend>Catatan verifikasi BPBD · latihan</legend>
+                {(
+                  [
+                    [
+                      "dataChecked",
+                      "Sumber, satuan, waktu observasi dan kualitas input telah ditinjau (semua fixture simulasi).",
+                    ],
+                    [
+                      "areaChecked",
+                      "Cakupan DAS, kecamatan serta kesiapan evakuasi telah ditinjau.",
+                    ],
+                    [
+                      "messageChecked",
+                      "Tingkat rekomendasi dan instruksi pesan dipahami; keputusan latihan disetujui manusia.",
+                    ],
+                  ] as const
+                ).map(([key, label]) => (
+                  <label key={key}>
+                    <input
+                      type="checkbox"
+                      checked={review[key]}
+                      onChange={(e) =>
+                        setReview((r) => ({ ...r, [key]: e.target.checked }))
+                      }
+                    />
+                    <span>{label}</span>
+                  </label>
+                ))}
+                <small>
+                  Centang berarti meninjau fixture untuk demo, bukan menyatakan
+                  verifikasi data lapangan.
+                </small>
+              </fieldset>
+            )}
             <div className="alert-actions">
               {alert.status === "draft" ? (
                 <button
                   className="btn primary"
-                  disabled={!permission || busy}
+                  disabled={
+                    !permission || busy || !Object.values(review).every(Boolean)
+                  }
                   onClick={() => act("verify")}
                 >
                   <ShieldCheck size={16} />

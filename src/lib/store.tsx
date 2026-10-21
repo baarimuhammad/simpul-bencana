@@ -17,9 +17,9 @@ import type {
   Mode,
   Role,
 } from "../shared/types";
-const KEY = "simpul-demo-v1";
+const KEY = "simpul-demo-v2";
 const initial = (): DemoState => ({
-  version: 1,
+  version: 2,
   role: null,
   mode: "shadow",
   reports: INITIAL_REPORTS,
@@ -39,7 +39,7 @@ function loadState() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY) ?? "null");
     if (
-      s?.version === 1 &&
+      s?.version === 2 &&
       Array.isArray(s.reports) &&
       Array.isArray(s.alerts) &&
       Array.isArray(s.audit) &&
@@ -214,7 +214,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       setState((s) => ({
         ...s,
         alerts: [
-          makeAlert(basin, risk.level, risk.probability, s.alerts.length + 1),
+          makeAlert(
+            basin,
+            risk.level,
+            risk.probability,
+            s.alerts.length + 1,
+            inputs ?? basin.inputs,
+          ),
           ...s.alerts,
         ],
       }));

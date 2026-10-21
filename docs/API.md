@@ -60,28 +60,35 @@ Body laporan:
 
 `/reports` mengembalikan `{report, simulated: true, persisted: false}` dengan HTTP 201. Kirim objek `report` yang sama ke `/reports/validate` bersama `basinId` dan `accept: true/false`; header role `bpbd` atau `admin`.
 
-`/alerts/verify` menerima `{basinId, alert}` dengan `alert.status: draft`. Gunakan objek Alert dari UI atau skema OpenAPI. Hasil `alert.status: verified` dan `verifiedBy` wajib dipakai untuk `/disseminate`:
+`/alerts/verify` menerima `{basinId, alert, review}` dengan `alert.status: draft`, `alert.evidence.sourceStatus: fixture`, snapshot input, dan tiga pemeriksaan bernilai `true`. Gunakan objek Alert dari UI atau seed dan kirim checklist setelah peninjauan latihan. Respons `alert.status: verified` serta `review` harus diteruskan utuh ke `/disseminate`; contoh permintaan verifikasi:
 
 ```json
 {
   "basinId": "tamiang",
-  "mode": "limited",
-  "retry": false,
+  "review": {
+    "dataChecked": true,
+    "areaChecked": true,
+    "messageChecked": true
+  },
   "alert": {
     "id": "SB-SIM-API-001",
     "basinId": "tamiang",
     "level": "Awas",
     "probability": 0.9,
-    "status": "verified",
-    "verifiedBy": "bpbd",
+    "status": "draft",
     "created": "2026-10-21T01:00:00.000Z",
     "message": "LATIHAN / DATA SIMULASI. Bukan peringatan aktual.",
+    "evidence": {
+      "sourceStatus": "fixture",
+      "inputs": { "rain": 220, "forestLoss": 61, "slope": 36, "water": 500 },
+      "factors": []
+    },
     "channels": []
   }
 }
 ```
 
-Mode `shadow` mendapat 403. Alert belum verified mendapat 400. Peran selain admin/bpbd mendapat 403. Pengiriman valid mengembalikan tujuh kanal, `externalMessagesSent: 0`; radio mendapat status `retry` pada percobaan pertama. Untuk retry kirim snapshot alert yang sama sebagai verified dengan `retry: true`, sebagaimana ditunjukkan UI.
+Untuk diseminasi, gunakan `alert` dari respons verifikasi dalam `{ "basinId": "tamiang", "mode": "limited", "retry": false, "alert": ... }`. Mode `shadow` mendapat 403. Alert tanpa review lengkap atau belum verified mendapat 400. Peran selain admin/bpbd mendapat 403. Pengiriman valid mengembalikan tujuh kanal, `externalMessagesSent: 0`; radio mendapat status `retry` pada percobaan pertama. Untuk retry kirim snapshot alert yang sama sebagai verified dengan `retry: true`, sebagaimana ditunjukkan UI. Contoh `factors: []` di atas hanya untuk memperlihatkan bentuk payload API; draf yang dibuat UI berisi empat faktor hasil perhitungan.
 
 ## Keterbatasan keamanan
 

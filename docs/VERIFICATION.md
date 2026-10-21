@@ -6,12 +6,12 @@
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TypeScript        | `npm run typecheck` lulus, termasuk client, handler API, Netlify entrypoint, dan tes                                                                                                                                |
 | Lint              | `npm run lint` lulus                                                                                                                                                                                                |
-| Tes otomatis      | **34 tes lulus** dalam 3 berkas: mesin fusi, API/role/mode, generator PDF dan HTTP attachment                                                                                                                       |
+| Tes otomatis      | **36 tes lulus** dalam 3 berkas: mesin fusi, API/role/mode, checklist verifikasi, snapshot input, generator PDF dan HTTP attachment                                                                                 |
 | Build produksi    | `npm run build` lulus dengan Vite 8.3.4 dan TypeScript 5.9.3                                                                                                                                                        |
 | Bundel Netlify    | `npm run check:functions` lulus dengan bundler resmi Netlify; manifest mengenali `api`, Node 22, invocation API v2, route `/api/*`                                                                                  |
 | Pratinjau lokal   | Aplikasi dijalankan dan diperiksa dalam Chrome; API tester menghasilkan respons risiko dari handler lokal                                                                                                           |
 | Replay            | Hari Normal tetap Normal; ekstrem berkembang menjadi Awas; alarm palsu memicu pembanding hujan tetapi tidak meningkatkan fusi ke Siaga                                                                              |
-| Human-in-the-loop | Draf dari replay diteruskan ke BPBD; verifikasi wajib; diseminasi diblokir saat bayangan; 7 kanal disimulasikan pada limited                                                                                        |
+| Human-in-the-loop | Draf dari replay membawa snapshot input; API menolak checklist yang belum lengkap dan status verified tanpa checklist; diseminasi diblokir saat bayangan; 7 kanal disimulasikan pada limited                               |
 | Gangguan kanal    | Radio diberi retry pada pengiriman pertama, kemudian seluruh kanal sukses dalam simulator; 0 pesan aktual                                                                                                           |
 | Laporan warga     | Form dummy berhasil mengantre; validasi BPBD mengubah probabilitas snapshot Tamiang dari sekitar 90% ke 92%; pending tidak berpengaruh                                                                              |
 | Enam peran        | Ketiga operator dan Publik tidak dapat membuat draf / mengganti mode. Admin dan BPBD dapat. Navigasi berbeda sesuai peran                                                                                           |
@@ -20,7 +20,7 @@
 | PDF               | Dokumen mempunyai header `%PDF-`, penutup `%%EOF`, isi sampai baris terakhir dan label simulasi di beberapa halaman. Handler HTTP mengembalikan `application/pdf` dan attachment; UI menyiapkan tautan/tombol unduh |
 | Error aplikasi    | Tidak ditemukan console error aplikasi pada jalur demo yang diperiksa. Log ekstensi browser berada di luar aplikasi                                                                                                 |
 
-Perintah gabungan yang dijalankan terakhir adalah `npm run check`: typecheck → lint → 34 tes → build → bundel Functions. Lingkungan pengujian Node 24.19.0; konfigurasi deploy Node 22. Dependensi langsung dan transitif dikunci. Seluruh mesin/API stateless tidak memerlukan layanan eksternal untuk tes.
+Perintah gabungan yang dijalankan terakhir adalah `npm run check`: typecheck → lint → 36 tes → build → bundel Functions. Konfigurasi deploy Node 22. Dependensi langsung dan transitif dikunci. Seluruh mesin/API stateless tidak memerlukan layanan eksternal untuk tes. Pemeriksaan UI desktop/ponsel pada tabel berasal dari versi awal; setelah revisi konten dan checklist, uji browser menyeluruh belum diulang. Jalankan ulang skrip demo sebelum presentasi.
 
 ## Hasil replay yang diamati pada UI (seluruhnya simulasi)
 

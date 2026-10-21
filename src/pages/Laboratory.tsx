@@ -329,7 +329,7 @@ export default function Laboratory({ go }: { go: (p: Page) => void }) {
       </div>
       <div className="comparison-grid">
         <Timeline
-          title="Sistem terpisah saat ini"
+          title="Pembanding terpisah (hipotetis)"
           type="separate"
           scenario={scenario}
           tick={tick}

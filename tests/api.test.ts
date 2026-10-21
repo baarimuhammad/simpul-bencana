@@ -8,6 +8,11 @@ const req = (path: string, body?: unknown, role = "admin") =>
     headers: { "content-type": "application/json", "x-demo-role": role },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
+const completeReview = {
+  dataChecked: true,
+  areaChecked: true,
+  messageChecked: true,
+};
 describe("API stateless Netlify", () => {
   for (const path of [
     "/health",
@@ -54,17 +59,74 @@ describe("API stateless Netlify", () => {
           await handleApi(
             req(
               "/alerts/verify",
-              { basinId: "tamiang", alert: makeAlert(BASINS[0], "Awas", 0.9) },
+              {
+                basinId: "tamiang",
+                alert: makeAlert(BASINS[0], "Awas", 0.9),
+                review: completeReview,
+              },
               role,
             ),
           )
         ).status,
       ).toBe(403));
+  it("verifikasi membutuhkan tiga pemeriksaan dan membawa snapshot bukti", async () => {
+    const alert = makeAlert(BASINS[0], "Awas", 0.9, 2, {
+      rain: 220,
+      forestLoss: 61,
+      slope: 36,
+      water: 500,
+    });
+    const base = { basinId: "tamiang", alert };
+    const incomplete = await handleApi(
+      req(
+        "/alerts/verify",
+        { ...base, review: { ...completeReview, areaChecked: false } },
+        "bpbd",
+      ),
+    );
+    expect(incomplete.status).toBe(400);
+    const nonBoolean = await handleApi(
+      req(
+        "/alerts/verify",
+        { ...base, review: { ...completeReview, dataChecked: "true" } },
+        "bpbd",
+      ),
+    );
+    expect(nonBoolean.status).toBe(400);
+    const verified = await handleApi(
+      req("/alerts/verify", { ...base, review: completeReview }, "bpbd"),
+    );
+    expect(verified.status).toBe(200);
+    const result = await verified.json();
+    expect(result.alert.review).toEqual(completeReview);
+    expect(result.alert.evidence.inputs.rain).toBe(220);
+    expect(result.alert.evidence.factors).toHaveLength(4);
+    expect(result.persisted).toBe(false);
+  });
+  it("status verified yang dipalsukan tanpa checklist tidak dapat diseminasi", async () => {
+    const alert = {
+      ...makeAlert(BASINS[0], "Awas", 0.9),
+      status: "verified",
+      verifiedBy: "bpbd",
+    };
+    expect(
+      (
+        await handleApi(
+          req(
+            "/disseminate",
+            { basinId: "tamiang", alert, mode: "limited" },
+            "bpbd",
+          ),
+        )
+      ).status,
+    ).toBe(400);
+  });
   it("mode bayangan memblokir diseminasi meskipun sudah diverifikasi", async () => {
     const alert = {
       ...makeAlert(BASINS[0], "Awas", 0.9),
       status: "verified",
       verifiedBy: "bpbd",
+      review: completeReview,
     };
     expect(
       (
@@ -95,6 +157,7 @@ describe("API stateless Netlify", () => {
       ...makeAlert(BASINS[0], "Awas", 0.9),
       status: "verified",
       verifiedBy: "bpbd",
+      review: completeReview,
     };
     const r = await handleApi(
       req(

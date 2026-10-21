@@ -249,19 +249,36 @@ export async function handleApi(req: Request): Promise<Response> {
     }
     if (path === "/alerts/verify") {
       const alert = body.alert as Alert;
+      const review = body.review as Alert["review"];
       if (
         !alert ||
         alert.basinId !== basin.id ||
         typeof alert.id !== "string" ||
         !LEVELS.includes(alert.level) ||
-        alert.status !== "draft"
+        alert.status !== "draft" ||
+        alert.evidence?.sourceStatus !== "fixture" ||
+        !validInputs(alert.evidence.inputs)
       )
         return error("Draf peringatan tidak valid.", 400);
+      if (
+        review?.dataChecked !== true ||
+        review.areaChecked !== true ||
+        review.messageChecked !== true
+      )
+        return error(
+          "Tiga pemeriksaan BPBD wajib dicatat sebelum verifikasi.",
+          400,
+        );
       return json({
         alert: {
           ...alert,
           status: "verified",
           verifiedBy: role,
+          review: {
+            dataChecked: true,
+            areaChecked: true,
+            messageChecked: true,
+          },
           channels: CHANNELS.map((name, i) => ({
             id: `ch-${i}`,
             name,
@@ -284,6 +301,9 @@ export async function handleApi(req: Request): Promise<Response> {
         !alert ||
         alert.status !== "verified" ||
         !["admin", "bpbd"].includes(alert.verifiedBy ?? "") ||
+        alert.review?.dataChecked !== true ||
+        alert.review.areaChecked !== true ||
+        alert.review.messageChecked !== true ||
         alert.basinId !== basin.id ||
         typeof alert.id !== "string" ||
         !LEVELS.includes(alert.level)

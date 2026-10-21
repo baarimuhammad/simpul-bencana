@@ -1,0 +1,995 @@
+--- a/DEMO-SCRIPT.md
++++ b/DEMO-SCRIPT.md
+@@ -20,7 +20,7 @@
+ 
+ **Narasi:** “Kami tidak mengusulkan sensor baru atau memindahkan seluruh data ke BNPB. Dalam rancangan nyata, data tetap di instansi dan di-query melalui kontrak API bersama. Yang disatukan adalah referensi waktu, wilayah, kualitas, dan pemahamannya.”
+ 
+-**Aksi:** tunjukkan diagram federasi, pemilik data, format/frekuensi dan metadata. Pilih endpoint `/risk?basin=tamiang&scenario=extreme&step=8`, klik **Uji endpoint**. Jelaskan bahwa endpoint benar-benar bekerja dengan data dummy; koneksi pemerintah belum diaktifkan.
++**Aksi:** tunjukkan tabel **Status asal data pada prototipe**, diagram federasi, pemilik data, format/frekuensi dan metadata. Pilih endpoint `/risk?basin=tamiang&scenario=extreme&step=8`, klik **Uji endpoint**. Jelaskan bahwa endpoint benar-benar bekerja dengan data dummy; koneksi pemerintah belum diaktifkan.
+ 
+ ## 1:15–2:35 · Adegan kunci: dari hujan menjadi penjelasan risiko
+ 
+@@ -42,7 +42,7 @@
+ 
+ **Narasi:** “Analisis memberi rekomendasi; BPBD memegang keputusan. Pada mode bayangan, sistem hanya mengamati. Tombol pengiriman diblokir, termasuk oleh API.”
+ 
+-**Aksi:** klik **Verifikasi BPBD**. Tunjukkan bahwa diseminasi masih diblokir. Ubah ke **Operasional terbatas**, klik **Simulasikan diseminasi**.
++**Aksi:** tunjukkan snapshot input dan dua faktor utama pada draf. Centang tiga pemeriksaan data, area, dan pesan setelah menerangkan bahwa semua pemeriksaan ini latihan pada fixture; klik **Verifikasi BPBD**. Tunjukkan bahwa diseminasi masih diblokir. Ubah ke **Operasional terbatas**, klik **Simulasikan diseminasi**.
+ 
+ **Narasi:** “Setelah verifikasi dan hanya dalam latihan operasional terbatas, peringatan berisi instruksi Bahasa Indonesia yang dapat ditindaklanjuti. Tujuh kanal disimulasikan: SMS, cell broadcast, aplikasi, sirene, radio komunitas, pengeras suara desa, dan media sosial. Tidak ada pesan aktual yang dikirim.”
+ 
+@@ -62,7 +62,7 @@
+ 
+ **Narasi:** “Di tahap uji coba, prediksi perlu dibandingkan dengan kejadian. Metrik di layar dihitung dari data sintetis; ini belum menunjukkan kelayakan operasional. Model harus diuji independen dan dikalibrasi pada setiap DAS.”
+ 
+-**Aksi:** tunjukkan empat tahap roadmap: Persiapan 1–12, Integrasi 13–30, Uji coba 31–42, Evaluasi 43–60 bulan. Tunjukkan pentahelix dan SDGs.
++**Aksi:** buka Arsitektur Model sekilas untuk menunjuk input → proses → keluaran; lalu Tentang untuk matriks proposal → demonstrasi → batas bukti, posisi terhadap BMKG/InaRISK, dan empat tahap roadmap: Persiapan 1–12, Integrasi 13–30, Uji coba 31–42, Evaluasi 43–60 bulan. Tunjukkan pentahelix dan SDGs bila waktu cukup.
+ 
+ **Penutup:** “Kebaruan yang kami ajukan adalah lapisan pemahaman lintas data: kepemilikan tetap pada instansi, hasil dapat dijelaskan, keputusan tetap pada manusia, dan respons menjangkau masyarakat lewat banyak kanal.”
+ 
+@@ -79,5 +79,5 @@
+ - **“Apakah akurasinya sudah terbukti?”** Belum. Metrik hanya berasal dari fixture dan belum mewakili performa nyata.
+ - **“Apakah data instansi sudah terhubung?”** Belum; kontrak, katalog dan API diperagakan dengan data dummy. Koneksi resmi memerlukan kerja sama institusi.
+ - **“Apakah ini melatih AI?”** Tidak. Arsitektur penelitian dijelaskan terpisah; prototipe menggunakan scoring transparan.
+-- **“Apa bedanya dengan portal data?”** Gagasan menekankan pemaduan parameter menjadi risiko yang dapat dijelaskan dan alur keputusan BPBD, sebagai pelengkap ekosistem yang ada.
++- **“Apa bedanya dengan BMKG dan InaRISK?”** BMKG menyediakan sinyal dan peringatan cuaca; InaRISK menyajikan pengetahuan risiko wilayah. Usulan SIMPUL memadukan sinyal cuaca, kondisi hulu, lereng, dan muka air per DAS menjadi rekomendasi yang dapat ditelusuri sampai keputusan BPBD. Ini hipotesis kontribusi, belum bukti lebih baik atau lebih cepat.
+ - **“Mengapa ada dua durasi dalam laporan?”** Demo mengikuti Bab 2.4 (60 bulan). Perbedaan Bab 3.2 (120 bulan) perlu diselaraskan pada revisi naskah proposal.
+--- a/README.md
++++ b/README.md
+@@ -55,7 +55,7 @@
+ - **Peta risiko:** GeoJSON lokal, pilih DAS, zoom, empat lapisan ilustratif, kecamatan, paparan, kapasitas dan rencana rute evakuasi dummy.
+ - **Laboratorium fusi:** tiga preset, replay 11 titik waktu × 30 menit, interval tampilan 1,6 detik, slider manual, timeline berdampingan, kontribusi skor, prior/rasio bukti/posterior.
+ - **Posko BPBD:** kesiapan kecamatan, paparan, titik kumpul, alur keputusan dan mode uji coba.
+-- **Peringatan:** draf → verifikasi BPBD → latihan diseminasi tujuh kanal. Mode bayangan diblokir di UI dan API. Radio sengaja memerlukan retry pertama; percobaan ulang berhasil.
++- **Peringatan:** snapshot input dan faktor pada draf → tiga pemeriksaan BPBD → latihan diseminasi tujuh kanal. Mode bayangan diblokir di UI dan API. Radio sengaja memerlukan retry pertama; percobaan ulang berhasil.
+ - **Laporan warga:** tanpa identitas, antrean validasi, laporan tervalidasi memperbarui risiko; laporan pending/rejected tidak memengaruhinya.
+ - **Interoperabilitas:** katalog lima sumber, metadata, kepemilikan data, fixture log federasi, log panggilan API sesi, API tester dan unduh OpenAPI.
+ - **Evaluasi bayangan:** confusion matrix, precision, recall, false alarm rate, lead time dari 33 observasi sintetis; semua rumus dan label dipaparkan.
+@@ -88,11 +88,11 @@
+ | Hujan Ekstrem + Hulu Gundul | Berawal Waspada karena kerentanan hulu, berkembang ke Awas; sinyal Siaga mendahului pembanding berbasis hujan |
+ | Alarm Palsu                 | Hujan sempat melewati ambang pembanding, tetapi fusi tetap Normal karena hulu terjaga dan muka air rendah     |
+ 
+-Pembanding “Sistem terpisah saat ini” adalah aturan buatan: hujan ≥180 mm/24 jam memicu alarm, dengan koordinasi manual dijelaskan secara naratif. **Bukan pengukuran sistem aktual BMKG/BNPB**. Penanda kejadian ekstrem buatan T+240 menit. Metrik evaluasi memakai label bahaya horizon sejak T+150 menit; ini sengaja membuat metrik tidak identik dengan penanda kejadian. Tiga replay ×11 snapshot =33 sampel berkorelasi, bukan set uji independen.
++Pembanding “Pembanding terpisah (hipotetis)” adalah aturan buatan: hujan ≥180 mm/24 jam memicu alarm, dengan koordinasi manual dijelaskan secara naratif. **Bukan pengukuran sistem aktual BMKG/BNPB**. Penanda kejadian ekstrem buatan T+240 menit. Metrik evaluasi memakai label bahaya horizon sejak T+150 menit; ini sengaja membuat metrik tidak identik dengan penanda kejadian. Tiga replay ×11 snapshot =33 sampel berkorelasi, bukan set uji independen.
+ 
+ ## Data, penyimpanan, dan peran
+ 
+-Seed tetap `2026`. Waktu simulasi dasar 21 Oktober 2026 pukul 08.00 WIB. Fixture dibuat dengan PRNG Mulberry32 dan konstanta; bukan data lapangan. Timestamp log bertambah berdasarkan urutan tindakan simulasi. Sesi demo disimpan hanya dalam `localStorage` dengan kunci `simpul-demo-v1`. Perangkat/peramban lain tidak berbagi perubahan. Reset tersedia untuk Admin Nasional melalui Audit & hak akses; bila localStorage tidak tersedia aplikasi tetap bekerja tanpa persistensi.
++Seed tetap `2026`. Waktu simulasi dasar 21 Oktober 2026 pukul 08.00 WIB. Fixture dibuat dengan PRNG Mulberry32 dan konstanta; bukan data lapangan. Timestamp log bertambah berdasarkan urutan tindakan simulasi. Sesi demo disimpan hanya dalam `localStorage` dengan kunci `simpul-demo-v2`. Versi ini mereset sesi v1 sekali agar draf lama yang belum memiliki snapshot bukti tidak ikut terbaca. Perangkat/peramban lain tidak berbagi perubahan. Reset tersedia untuk Admin Nasional melalui Audit & hak akses; bila localStorage tidak tersedia aplikasi tetap bekerja tanpa persistensi.
+ 
+ Enam peran: Admin Nasional BNPB, Operator BMKG, Operator Kemenhut/KLHK, Operator KemenPU/BIG, BPBD Daerah, Publik. Peran operator dapat memeriksa katalog/model tetapi tidak memverifikasi atau mendiseminasikan peringatan. Admin dan BPBD dapat memverifikasi, memvalidasi laporan dan mengganti mode. Publik dapat membaca risiko/peringatan dan mengirim laporan dummy.
+ 
+@@ -153,7 +153,7 @@
+ - Pentahelix dibuat eksplisit menjadi pemerintah, akademisi, dunia usaha, masyarakat, media. Tidak menyiratkan komitmen kelembagaan nyata.
+ - Statistik latar proposal tidak dipakai pada KPI kinerja aplikasi; rujukan proposal ditampilkan di Tentang sebagai rujukan yang memerlukan verifikasi tersendiri.
+ - Keputusan sederhana: database dan Blobs tidak dibutuhkan untuk demo satu perangkat; tidak ada seed/migrasi server yang harus dikelola.
+-- Halaman laboratorium mempertahankan preset selama kunjungan halaman; meninggalkan halaman mereset replay. Draf yang diteruskan ke BPBD menyimpan snapshot level/probabilitas dan pesan hasil slider/replay saat itu. Dasbor tetap menampilkan snapshot pemantauan awal + bukti warga tervalidasi.
++- Halaman laboratorium mempertahankan preset selama kunjungan halaman; meninggalkan halaman mereset replay. Draf yang diteruskan ke BPBD menyimpan snapshot input, faktor, level/probabilitas dan pesan hasil slider/replay saat itu. Checklist adalah catatan latihan pada payload, bukan bukti pemeriksaan lapangan atau autentikasi BPBD. Dasbor tetap menampilkan snapshot pemantauan awal + bukti warga tervalidasi.
+ 
+ ## Untuk menggunakan data nyata
+ 
+--- a/docs/API.md
++++ b/docs/API.md
+@@ -60,28 +60,35 @@
+ 
+ `/reports` mengembalikan `{report, simulated: true, persisted: false}` dengan HTTP 201. Kirim objek `report` yang sama ke `/reports/validate` bersama `basinId` dan `accept: true/false`; header role `bpbd` atau `admin`.
+ 
+-`/alerts/verify` menerima `{basinId, alert}` dengan `alert.status: draft`. Gunakan objek Alert dari UI atau skema OpenAPI. Hasil `alert.status: verified` dan `verifiedBy` wajib dipakai untuk `/disseminate`:
++`/alerts/verify` menerima `{basinId, alert, review}` dengan `alert.status: draft`, `alert.evidence.sourceStatus: fixture`, snapshot input, dan tiga pemeriksaan bernilai `true`. Gunakan objek Alert dari UI atau seed dan kirim checklist setelah peninjauan latihan. Respons `alert.status: verified` serta `review` harus diteruskan utuh ke `/disseminate`; contoh permintaan verifikasi:
+ 
+ ```json
+ {
+   "basinId": "tamiang",
+-  "mode": "limited",
+-  "retry": false,
++  "review": {
++    "dataChecked": true,
++    "areaChecked": true,
++    "messageChecked": true
++  },
+   "alert": {
+     "id": "SB-SIM-API-001",
+     "basinId": "tamiang",
+     "level": "Awas",
+     "probability": 0.9,
+-    "status": "verified",
+-    "verifiedBy": "bpbd",
++    "status": "draft",
+     "created": "2026-10-21T01:00:00.000Z",
+     "message": "LATIHAN / DATA SIMULASI. Bukan peringatan aktual.",
++    "evidence": {
++      "sourceStatus": "fixture",
++      "inputs": { "rain": 220, "forestLoss": 61, "slope": 36, "water": 500 },
++      "factors": []
++    },
+     "channels": []
+   }
+ }
+ ```
+ 
+-Mode `shadow` mendapat 403. Alert belum verified mendapat 400. Peran selain admin/bpbd mendapat 403. Pengiriman valid mengembalikan tujuh kanal, `externalMessagesSent: 0`; radio mendapat status `retry` pada percobaan pertama. Untuk retry kirim snapshot alert yang sama sebagai verified dengan `retry: true`, sebagaimana ditunjukkan UI.
++Untuk diseminasi, gunakan `alert` dari respons verifikasi dalam `{ "basinId": "tamiang", "mode": "limited", "retry": false, "alert": ... }`. Mode `shadow` mendapat 403. Alert tanpa review lengkap atau belum verified mendapat 400. Peran selain admin/bpbd mendapat 403. Pengiriman valid mengembalikan tujuh kanal, `externalMessagesSent: 0`; radio mendapat status `retry` pada percobaan pertama. Untuk retry kirim snapshot alert yang sama sebagai verified dengan `retry: true`, sebagaimana ditunjukkan UI. Contoh `factors: []` di atas hanya untuk memperlihatkan bentuk payload API; draf yang dibuat UI berisi empat faktor hasil perhitungan.
+ 
+ ## Keterbatasan keamanan
+ 
+--- a/docs/VERIFICATION.md
++++ b/docs/VERIFICATION.md
+@@ -6,12 +6,12 @@
+ | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+ | TypeScript        | `npm run typecheck` lulus, termasuk client, handler API, Netlify entrypoint, dan tes                                                                                                                                |
+ | Lint              | `npm run lint` lulus                                                                                                                                                                                                |
+-| Tes otomatis      | **34 tes lulus** dalam 3 berkas: mesin fusi, API/role/mode, generator PDF dan HTTP attachment                                                                                                                       |
++| Tes otomatis      | **36 tes lulus** dalam 3 berkas: mesin fusi, API/role/mode, checklist verifikasi, snapshot input, generator PDF dan HTTP attachment                                                                                 |
+ | Build produksi    | `npm run build` lulus dengan Vite 8.3.4 dan TypeScript 5.9.3                                                                                                                                                        |
+ | Bundel Netlify    | `npm run check:functions` lulus dengan bundler resmi Netlify; manifest mengenali `api`, Node 22, invocation API v2, route `/api/*`                                                                                  |
+ | Pratinjau lokal   | Aplikasi dijalankan dan diperiksa dalam Chrome; API tester menghasilkan respons risiko dari handler lokal                                                                                                           |
+ | Replay            | Hari Normal tetap Normal; ekstrem berkembang menjadi Awas; alarm palsu memicu pembanding hujan tetapi tidak meningkatkan fusi ke Siaga                                                                              |
+-| Human-in-the-loop | Draf dari replay diteruskan ke BPBD; verifikasi wajib; diseminasi diblokir saat bayangan; 7 kanal disimulasikan pada limited                                                                                        |
++| Human-in-the-loop | Draf dari replay membawa snapshot input; API menolak checklist yang belum lengkap dan status verified tanpa checklist; diseminasi diblokir saat bayangan; 7 kanal disimulasikan pada limited                               |
+ | Gangguan kanal    | Radio diberi retry pada pengiriman pertama, kemudian seluruh kanal sukses dalam simulator; 0 pesan aktual                                                                                                           |
+ | Laporan warga     | Form dummy berhasil mengantre; validasi BPBD mengubah probabilitas snapshot Tamiang dari sekitar 90% ke 92%; pending tidak berpengaruh                                                                              |
+ | Enam peran        | Ketiga operator dan Publik tidak dapat membuat draf / mengganti mode. Admin dan BPBD dapat. Navigasi berbeda sesuai peran                                                                                           |
+@@ -20,7 +20,7 @@
+ | PDF               | Dokumen mempunyai header `%PDF-`, penutup `%%EOF`, isi sampai baris terakhir dan label simulasi di beberapa halaman. Handler HTTP mengembalikan `application/pdf` dan attachment; UI menyiapkan tautan/tombol unduh |
+ | Error aplikasi    | Tidak ditemukan console error aplikasi pada jalur demo yang diperiksa. Log ekstensi browser berada di luar aplikasi                                                                                                 |
+ 
+-Perintah gabungan yang dijalankan terakhir adalah `npm run check`: typecheck → lint → 34 tes → build → bundel Functions. Lingkungan pengujian Node 24.19.0; konfigurasi deploy Node 22. Dependensi langsung dan transitif dikunci. Seluruh mesin/API stateless tidak memerlukan layanan eksternal untuk tes.
++Perintah gabungan yang dijalankan terakhir adalah `npm run check`: typecheck → lint → 36 tes → build → bundel Functions. Konfigurasi deploy Node 22. Dependensi langsung dan transitif dikunci. Seluruh mesin/API stateless tidak memerlukan layanan eksternal untuk tes. Pemeriksaan UI desktop/ponsel pada tabel berasal dari versi awal; setelah revisi konten dan checklist, uji browser menyeluruh belum diulang. Jalankan ulang skrip demo sebelum presentasi.
+ 
+ ## Hasil replay yang diamati pada UI (seluruhnya simulasi)
+ 
+--- a/server/api.ts
++++ b/server/api.ts
+@@ -249,19 +249,36 @@
+     }
+     if (path === "/alerts/verify") {
+       const alert = body.alert as Alert;
++      const review = body.review as Alert["review"];
+       if (
+         !alert ||
+         alert.basinId !== basin.id ||
+         typeof alert.id !== "string" ||
+         !LEVELS.includes(alert.level) ||
+-        alert.status !== "draft"
++        alert.status !== "draft" ||
++        alert.evidence?.sourceStatus !== "fixture" ||
++        !validInputs(alert.evidence.inputs)
+       )
+         return error("Draf peringatan tidak valid.", 400);
++      if (
++        review?.dataChecked !== true ||
++        review.areaChecked !== true ||
++        review.messageChecked !== true
++      )
++        return error(
++          "Tiga pemeriksaan BPBD wajib dicatat sebelum verifikasi.",
++          400,
++        );
+       return json({
+         alert: {
+           ...alert,
+           status: "verified",
+           verifiedBy: role,
++          review: {
++            dataChecked: true,
++            areaChecked: true,
++            messageChecked: true,
++          },
+           channels: CHANNELS.map((name, i) => ({
+             id: `ch-${i}`,
+             name,
+@@ -284,6 +301,9 @@
+         !alert ||
+         alert.status !== "verified" ||
+         !["admin", "bpbd"].includes(alert.verifiedBy ?? "") ||
++        alert.review?.dataChecked !== true ||
++        alert.review.areaChecked !== true ||
++        alert.review.messageChecked !== true ||
+         alert.basinId !== basin.id ||
+         typeof alert.id !== "string" ||
+         !LEVELS.includes(alert.level)
+--- a/server/openapi.ts
++++ b/server/openapi.ts
+@@ -53,6 +53,7 @@
+     "created",
+     "message",
+     "channels",
++    "evidence",
+   ],
+   properties: {
+     id: { type: "string" },
+@@ -61,6 +62,24 @@
+     probability: { type: "number", minimum: 0, maximum: 1 },
+     status: { enum: ["draft", "verified", "sent"] },
+     verifiedBy: { enum: ["admin", "bpbd"] },
++    review: {
++      type: "object",
++      required: ["dataChecked", "areaChecked", "messageChecked"],
++      properties: {
++        dataChecked: { type: "boolean" },
++        areaChecked: { type: "boolean" },
++        messageChecked: { type: "boolean" },
++      },
++    },
++    evidence: {
++      type: "object",
++      required: ["inputs", "factors", "sourceStatus"],
++      properties: {
++        inputs: { $ref: "#/components/schemas/Inputs" },
++        factors: { type: "array", items: { type: "object" } },
++        sourceStatus: { enum: ["fixture"] },
++      },
++    },
+     created: { type: "string" },
+     message: { type: "string" },
+     channels: { type: "array", items: { type: "object" } },
+@@ -197,9 +216,20 @@
+       ["admin", "bpbd"],
+     ),
+     "/alerts/verify": post(
+-      "Verifikasi draf peringatan oleh manusia",
+-      { alert: { $ref: "#/components/schemas/Alert" } },
+-      ["basinId", "alert"],
++      "Verifikasi draf peringatan setelah pemeriksaan manusia",
++      {
++        alert: { $ref: "#/components/schemas/Alert" },
++        review: {
++          type: "object",
++          required: ["dataChecked", "areaChecked", "messageChecked"],
++          properties: {
++            dataChecked: { type: "boolean", const: true },
++            areaChecked: { type: "boolean", const: true },
++            messageChecked: { type: "boolean", const: true },
++          },
++        },
++      },
++      ["basinId", "alert", "review"],
+       ["admin", "bpbd"],
+     ),
+     "/disseminate": post(
+--- a/src/lib/store.tsx
++++ b/src/lib/store.tsx
+@@ -17,9 +17,9 @@
+   Mode,
+   Role,
+ } from "../shared/types";
+-const KEY = "simpul-demo-v1";
++const KEY = "simpul-demo-v2";
+ const initial = (): DemoState => ({
+-  version: 1,
++  version: 2,
+   role: null,
+   mode: "shadow",
+   reports: INITIAL_REPORTS,
+@@ -39,7 +39,7 @@
+   try {
+     const s = JSON.parse(localStorage.getItem(KEY) ?? "null");
+     if (
+-      s?.version === 1 &&
++      s?.version === 2 &&
+       Array.isArray(s.reports) &&
+       Array.isArray(s.alerts) &&
+       Array.isArray(s.audit) &&
+@@ -214,7 +214,13 @@
+       setState((s) => ({
+         ...s,
+         alerts: [
+-          makeAlert(basin, risk.level, risk.probability, s.alerts.length + 1),
++          makeAlert(
++            basin,
++            risk.level,
++            risk.probability,
++            s.alerts.length + 1,
++            inputs ?? basin.inputs,
++          ),
+           ...s.alerts,
+         ],
+       }));
+--- a/src/pages/Ecosystem.tsx
++++ b/src/pages/Ecosystem.tsx
+@@ -131,6 +131,70 @@
+         data pemerintah.
+       </Note>
+       <Panel
++        title="Status asal data pada prototipe"
++        eyebrow="BUKTI KONEKSI · BUKAN KLAIM REAL-TIME"
++      >
++        <div className="table-scroll">
++          <table>
++            <thead>
++              <tr>
++                <th>Parameter</th>
++                <th>Instansi yang diusulkan</th>
++                <th>Yang dijalankan hari ini</th>
++                <th>Integrasi aktual</th>
++              </tr>
++            </thead>
++            <tbody>
++              {[
++                [
++                  "Hujan 24 jam",
++                  "BMKG",
++                  "Deret angka fixture dengan seed 2026",
++                ],
++                [
++                  "Degradasi tutupan hulu",
++                  "Kementerian Kehutanan (sebelumnya KLHK)",
++                  "Angka fixture; bukan raster satelit",
++                ],
++                [
++                  "Tinggi muka air",
++                  "KemenPU",
++                  "Angka fixture; bukan pembacaan pos",
++                ],
++                [
++                  "Lereng / referensi DAS",
++                  "BIG",
++                  "Lereng fixture; peta dasar Natural Earth",
++                ],
++                [
++                  "Laporan & keputusan",
++                  "BPBD / BNPB",
++                  "Peran dan log dalam sesi peramban",
++                ],
++              ].map(([parameter, owner, current]) => (
++                <tr key={parameter}>
++                  <td>
++                    <strong>{parameter}</strong>
++                  </td>
++                  <td>{owner}</td>
++                  <td>{current}</td>
++                  <td>
++                    <span className="status-pill pending">
++                      Belum tersambung
++                    </span>
++                  </td>
++                </tr>
++              ))}
++            </tbody>
++          </table>
++        </div>
++        <p className="small-text">
++          Endpoint <code>/api/*</code> adalah handler simulasi milik prototipe,
++          bukan API BMKG, Kemenhut, KemenPU, BIG, atau BNPB. “Koneksi aktif”
++          pada katalog berarti alur fixture internal.
++        </p>
++      </Panel>
++      <Panel
+         title="Katalog sumber data"
+         eyebrow="KONTRAK & KUALITAS · SELURUH NILAI SIMULASI"
+         action={
+@@ -653,34 +717,66 @@
+             keluaran identik; replay tidak mengakumulasi bukti yang sama.
+           </Note>
+         </Panel>
+-        <Panel title="Saat beralih ke data nyata" eyebrow="AGENDA PENELITIAN">
++        <Panel
++          title="Input → proses → keluaran"
++          eyebrow="JAWABAN METODE UNTUK JURI"
++        >
+           <ol className="plain-list">
+             <li>
+-              Ganti fixture dengan adapter API resmi yang disepakati pemilik
+-              data.
++              <strong>Input:</strong> hujan 24 jam (mm), degradasi hulu (%),
++              kemiringan (°), muka air (cm), prior DAS, laporan warga
++              tervalidasi. Semua nilai fixture.
+             </li>
+             <li>
+-              Validasi CRS, unit, resolusi, waktu observasi, dan kebaruan data.
++              <strong>Penyelarasan:</strong> satu ID DAS dan waktu replay 30
++              menit; unit dibatasi sesuai skala sintetik. Tidak ada resampling
++              raster atau pemeriksaan data hilang yang sungguhan.
+             </li>
+             <li>
+-              Latih model temporal dan spasial dengan pemisahan data per
+-              kejadian dan DAS.
++              <strong>Fusi:</strong> empat fitur dinormalisasi, bobot aturan
++              kontekstual dijumlahkan, interaksi hujan–lahan ditambah dan
++              retensi dikurangkan. Bukti menggeser log-odds prior secara analog
++              Bayesian.
+             </li>
+             <li>
+-              Kalibrasi prior, likelihood, ambang, serta mekanisme data hilang
+-              dan bukti berulang.
+-            </li>
+-            <li>
+-              Uji bias wilayah, kalibrasi probabilitas, ketidakpastian, dan
+-              kegunaan penjelasan.
+-            </li>
+-            <li>
+-              Terapkan identitas, otorisasi, penyimpanan aman, persetujuan SOP,
+-              dan audit independen.
++              <strong>Keluaran:</strong> skor, probabilitas pedagogis, level
++              bertingkat dan kontribusi per faktor; draf EWS menyimpan snapshot
++              input agar dapat ditinjau BPBD.
+             </li>
+           </ol>
++          <Note tone="warning">
++            Bobot bukan parameter attention terlatih. Rasio bukti bukan
++            likelihood yang diestimasi dari data kejadian; probabilitas belum
++            dikalibrasi dan tidak boleh dipakai untuk keselamatan.
++          </Note>
+         </Panel>
+       </div>
++      <Panel title="Saat beralih ke data nyata" eyebrow="AGENDA PENELITIAN">
++        <ol className="plain-list">
++          <li>
++            Ganti fixture dengan adapter API resmi yang disepakati pemilik data.
++          </li>
++          <li>
++            Validasi CRS, unit, resolusi, waktu observasi, dan kebaruan data.
++          </li>
++          <li>
++            Latih model temporal dan spasial dengan pemisahan data per kejadian
++            dan DAS.
++          </li>
++          <li>
++            Kalibrasi prior, likelihood, ambang, serta mekanisme data hilang dan
++            bukti berulang.
++          </li>
++          <li>
++            Uji bias wilayah, kalibrasi probabilitas, ketidakpastian, dan
++            kegunaan penjelasan.
++          </li>
++          <li>
++            Terapkan identitas, otorisasi, penyimpanan aman, persetujuan SOP,
++            dan audit independen.
++          </li>
++        </ol>
++      </Panel>
+     </>
+   );
+ }
+@@ -844,6 +940,60 @@
+         <Network size={180} className="about-decoration" />
+       </div>
+       <Panel
++        title="Jejak proposal → demonstrasi → bukti"
++        eyebrow="MATRIKS KESESUAIAN KONSEP"
++      >
++        <div className="table-scroll">
++          <table>
++            <thead>
++              <tr>
++                <th>Konsep proposal</th>
++                <th>Yang diperagakan</th>
++                <th>Bukti dalam prototipe</th>
++                <th>Yang belum terbukti</th>
++              </tr>
++            </thead>
++            <tbody>
++              {[
++                [
++                  "Interoperabilitas data",
++                  "Katalog pemilik, kontrak, query per DAS",
++                  "Endpoint /api/catalog, /api/risk dan log pertukaran fixture",
++                  "Belum ada perjanjian, adapter, atau API instansi",
++                ],
++                [
++                  "AI Fusion multi-parameter",
++                  "Empat input, bobot aturan, prior → bukti → posterior",
++                  "Slider, kontribusi dan tes skenario deterministik",
++                  "Belum ada model LSTM/CNN terlatih atau kalibrasi",
++                ],
++                [
++                  "Pemetaan risiko",
++                  "Peta delapan DAS dengan layer ilustratif",
++                  "Status, faktor, kecamatan dan paparan dummy",
++                  "Bukan batas DAS resmi atau peta risiko tervalidasi",
++                ],
++                [
++                  "Early Warning System",
++                  "Rekomendasi → checklist BPBD → kanal latihan",
++                  "Snapshot draf, verifikasi, blok mode bayangan, CAP Test",
++                  "Belum mengirim peringatan ke publik",
++                ],
++              ].map(([concept, feature, evidence, gap]) => (
++                <tr key={concept}>
++                  <td>
++                    <strong>{concept}</strong>
++                  </td>
++                  <td>{feature}</td>
++                  <td>{evidence}</td>
++                  <td>{gap}</td>
++                </tr>
++              ))}
++            </tbody>
++          </table>
++        </div>
++      </Panel>
++      <Panel
+         title="Roadmap implementasi"
+         eyebrow="ACUAN UTAMA: BAB 2.4 · 60 BULAN"
+       >
+@@ -924,32 +1074,60 @@
+           </div>
+         </Panel>
+         <Panel
+-          title="Posisi kebaruan gagasan"
+-          eyebrow="PEMBANDING KONSEPTUAL, BUKAN AUDIT PRODUK"
++          title="Kebaruan sebagai hipotesis kontribusi"
++          eyebrow="MELENGKAPI EKOSISTEM YANG SUDAH ADA"
+         >
+           <div className="comparison-about">
+-            <h3>Portal Satu Data Bencana</h3>
++            <h3>BMKG · sumber cuaca dan peringatan</h3>
+             <p>
+-              Gagasan melengkapi fungsi pertukaran dan penyajian data dengan
+-              fusi lintas parameter, penjelasan risiko, serta alur keputusan
+-              daerah.
++              BMKG sudah menyediakan informasi dan peringatan cuaca, termasuk
++              pendekatan berbasis dampak. SIMPUL mengusulkan agar sinyal ini
++              dibaca bersama kondisi hulu dan respons sungai pada tingkat DAS;
++              tidak menggantikan kewenangan BMKG.
+             </p>
+-            <h3>IDRIP</h3>
++            <h3>InaRISK · pengetahuan risiko wilayah</h3>
+             <p>
+-              Mengadaptasi prinsip penguatan interoperabilitas dan peringatan
+-              dini ke domain hidrometeorologi yang memiliki karakter data
+-              beragam.
++              InaRISK BNPB menampilkan informasi bahaya/risiko dan rekomendasi
++              mitigasi. SIMPUL mengusulkan pelengkap berupa pembaruan
++              multi-parameter pada replay, alasan level, dan alur rekomendasi ke
++              verifikasi BPBD; ini belum membuktikan keunggulan atas InaRISK.
+             </p>
+-            <h3>SIMPUL BENCANA</h3>
++            <h3>IDRIP · penguatan sistem peringatan</h3>
+             <p>
+-              Fusi hujan–lahan–topografi–hidrologi, bobot kontekstual DAS,
+-              pembaruan bukti, dan diseminasi dengan verifikasi BPBD.
++              Pengalaman IDRIP pada pemantauan dan diseminasi gempa–tsunami
++              menjadi rujukan tata kelola. Proposal ini berfokus pada fusi
++              hujan–lahan–lereng–muka air untuk banjir/longsor, dengan evaluasi
++              tersendiri yang belum dilakukan.
+             </p>
+           </div>
+           <p className="small-text">
+-            Uraian ini adalah posisi yang diajukan proposal, bukan pernyataan
+-            terverifikasi tentang seluruh kemampuan portal atau program
+-            pembanding.
++            Kebaruan adalah kombinasi dan alur kerja yang{" "}
++            <strong>diusulkan</strong>, bukan klaim fitur tersebut tidak ada di
++            sistem lain atau sudah lebih cepat/akurat. Rujukan resmi:{" "}
++            <a
++              href="https://www.bmkg.go.id/cuaca/potensi-cuaca-ekstrem"
++              target="_blank"
++              rel="noreferrer"
++            >
++              BMKG cuaca
++            </a>{" "}
++            ·{" "}
++            <a
++              href="https://inarisk.bnpb.go.id/"
++              target="_blank"
++              rel="noreferrer"
++            >
++              InaRISK BNPB
++            </a>{" "}
++            ·{" "}
++            <a
++              href="https://www.bmkg.go.id/berita/utama/menutup-idrip-peringatan-dini-gempa-tsunami-kini-maksimum-3-menit-akurasi-90"
++              target="_blank"
++              rel="noreferrer"
++            >
++              BMKG tentang IDRIP
++            </a>
++            .
+           </p>
+           <div className="sdg-row">
+             {[
+--- a/src/pages/Laboratory.tsx
++++ b/src/pages/Laboratory.tsx
+@@ -329,7 +329,7 @@
+       </div>
+       <div className="comparison-grid">
+         <Timeline
+-          title="Sistem terpisah saat ini"
++          title="Pembanding terpisah (hipotetis)"
+           type="separate"
+           scenario={scenario}
+           tick={tick}
+--- a/src/pages/Operations.tsx
++++ b/src/pages/Operations.tsx
+@@ -34,7 +34,13 @@
+   Stat,
+   Step,
+ } from "../components/UI";
+-import type { Alert, CitizenReport, Page, ReportKind } from "../shared/types";
++import {
++  ROLE_NAMES,
++  type Alert,
++  type CitizenReport,
++  type Page,
++  type ReportKind,
++} from "../shared/types";
+ export default function Operations({
+   page,
+   go,
+@@ -249,6 +255,11 @@
+   const [chosen, setChosen] = useState("");
+   const [busy, setBusy] = useState(false);
+   const [preview, setPreview] = useState("Pesan");
++  const [review, setReview] = useState({
++    dataChecked: false,
++    areaChecked: false,
++    messageChecked: false,
++  });
+   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+   const pdfLines = state.alerts.flatMap((a) => [
+     `${a.id} | DAS ${BASINS.find((b) => b.id === a.basinId)?.name} | ${a.level} | ${a.status}`,
+@@ -278,12 +289,19 @@
+           alert: action === "retry" ? { ...alert, status: "verified" } : alert,
+           mode: state.mode,
+           retry: action === "retry",
++          ...(action === "verify" ? { review } : {}),
+         },
+       );
+       updateAlert(r.alert);
++      if (action === "verify")
++        setReview({
++          dataChecked: false,
++          areaChecked: false,
++          messageChecked: false,
++        });
+       notify(
+         action === "verify"
+-          ? "Peringatan diverifikasi oleh operator demo."
++          ? "Tiga pemeriksaan dicatat; peringatan diverifikasi oleh peran demo."
+           : action === "retry"
+             ? "Kanal radio berhasil disimulasikan ulang."
+             : "Simulasi multikanal selesai. Radio perlu dicoba ulang; kanal lain berhasil.",
+@@ -372,7 +390,14 @@
+             <button
+               className={`alert-list-item ${a.id === alert?.id ? "selected" : ""}`}
+               key={a.id}
+-              onClick={() => setChosen(a.id)}
++              onClick={() => {
++                setChosen(a.id);
++                setReview({
++                  dataChecked: false,
++                  areaChecked: false,
++                  messageChecked: false,
++                });
++              }}
+             >
+               <div>
+                 <strong>
+@@ -399,7 +424,7 @@
+           >
+             <div className="alert-workflow">
+               <span className="done">
+-                <Check size={13} /> Analisis
++                <Check size={13} /> Rekomendasi model
+               </span>
+               <ChevronArrow />
+               <span className={alert.status !== "draft" ? "done" : ""}>
+@@ -407,8 +432,31 @@
+               </span>
+               <ChevronArrow />
+               <span className={alert.status === "sent" ? "done" : ""}>
+-                <Radio size={13} /> Diseminasi simulasi
++                <Radio size={13} /> Kanal simulasi → warga
+               </span>
++            </div>
++            <div className="ews-evidence">
++              <div>
++                <strong>Dasar rekomendasi · snapshot draf</strong>
++                <p>
++                  {alert.level} ({pct(alert.probability)} simulasi). Input:
++                  hujan {alert.evidence.inputs.rain} mm, degradasi hulu{" "}
++                  {alert.evidence.inputs.forestLoss}%, lereng{" "}
++                  {alert.evidence.inputs.slope}°, muka air{" "}
++                  {alert.evidence.inputs.water} cm.
++                </p>
++                <small>
++                  Kontributor skor:{" "}
++                  {alert.evidence.factors
++                    .slice()
++                    .sort((a, b) => b.contribution - a.contribution)
++                    .slice(0, 2)
++                    .map((f) => f.label)
++                    .join(" dan ")}
++                  . Seluruhnya fixture; tidak ada telemetri instansi.
++                </small>
++              </div>
++              <span className="count-pill">REKOMENDASI · BELUM KEPUTUSAN</span>
+             </div>
+             <div className="tab-row">
+               {["Pesan", "CAP JSON", "Kanal pengiriman"].map((p) => (
+@@ -468,7 +516,7 @@
+                     Keputusan{" "}
+                     <strong>
+                       {alert.verifiedBy
+-                        ? "Operator demo terverifikasi"
++                        ? `${ROLE_NAMES[alert.verifiedBy]} (demo)`
+                         : "Menunggu manusia"}
+                     </strong>
+                   </span>
+@@ -488,11 +536,49 @@
+                 Diseminasi diblokir oleh UI dan API.
+               </Note>
+             )}
++            {alert.status === "draft" && permission && (
++              <fieldset className="review-checklist">
++                <legend>Catatan verifikasi BPBD · latihan</legend>
++                {(
++                  [
++                    [
++                      "dataChecked",
++                      "Sumber, satuan, waktu observasi dan kualitas input telah ditinjau (semua fixture simulasi).",
++                    ],
++                    [
++                      "areaChecked",
++                      "Cakupan DAS, kecamatan serta kesiapan evakuasi telah ditinjau.",
++                    ],
++                    [
++                      "messageChecked",
++                      "Tingkat rekomendasi dan instruksi pesan dipahami; keputusan latihan disetujui manusia.",
++                    ],
++                  ] as const
++                ).map(([key, label]) => (
++                  <label key={key}>
++                    <input
++                      type="checkbox"
++                      checked={review[key]}
++                      onChange={(e) =>
++                        setReview((r) => ({ ...r, [key]: e.target.checked }))
++                      }
++                    />
++                    <span>{label}</span>
++                  </label>
++                ))}
++                <small>
++                  Centang berarti meninjau fixture untuk demo, bukan menyatakan
++                  verifikasi data lapangan.
++                </small>
++              </fieldset>
++            )}
+             <div className="alert-actions">
+               {alert.status === "draft" ? (
+                 <button
+                   className="btn primary"
+-                  disabled={!permission || busy}
++                  disabled={
++                    !permission || busy || !Object.values(review).every(Boolean)
++                  }
+                   onClick={() => act("verify")}
+                 >
+                   <ShieldCheck size={16} />
+--- a/src/shared/alerts.ts
++++ b/src/shared/alerts.ts
+@@ -1,6 +1,7 @@
+ import { CHANNELS } from "./types.ts";
+ import { SIM_TIME } from "./seed.ts";
+-import type { Alert, Basin, Level } from "./types.ts";
++import { fuse } from "./fusion.ts";
++import type { Alert, Basin, Inputs, Level } from "./types.ts";
+ export function alertMessage(basin: Basin, level: Level) {
+   return `LATIHAN / DATA SIMULASI — ${level.toUpperCase()}: potensi banjir dan longsor di DAS ${basin.name}, ${basin.province}. Warga ${basin.districts[0].name} diminta menjauhi sungai dan lereng, menyiapkan tas siaga, serta mengikuti arahan petugas BPBD menuju ${basin.shelters[0].name}. Bantu kelompok rentan. Jangan melintasi arus air. Ini bukan peringatan bencana aktual.`;
+ }
+@@ -9,6 +10,7 @@
+   level: Level,
+   probability: number,
+   index = 1,
++  inputs: Inputs = basin.inputs,
+ ): Alert {
+   return {
+     id: `SB-SIM-${String(index).padStart(3, "0")}`,
+@@ -17,6 +19,11 @@
+     probability,
+     status: "draft",
+     created: SIM_TIME,
++    evidence: {
++      inputs: { ...inputs },
++      factors: fuse(basin, inputs).factors,
++      sourceStatus: "fixture",
++    },
+     channels: CHANNELS.map((name, i) => ({
+       id: `ch-${i}`,
+       name,
+--- a/src/shared/types.ts
++++ b/src/shared/types.ts
+@@ -95,6 +95,16 @@
+   status: "draft" | "verified" | "sent";
+   created: string;
+   verifiedBy?: Role;
++  review?: {
++    dataChecked: boolean;
++    areaChecked: boolean;
++    messageChecked: boolean;
++  };
++  evidence: {
++    inputs: Inputs;
++    factors: Factor[];
++    sourceStatus: "fixture";
++  };
+   channels: Channel[];
+   message: string;
+ }
+@@ -106,7 +116,7 @@
+   detail: string;
+ }
+ export interface DemoState {
+-  version: 1;
++  version: 2;
+   role: Role | null;
+   mode: Mode;
+   reports: CitizenReport[];
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -4739,6 +4739,75 @@
+ }
+ 
+ /* A closed off-canvas menu must also leave the keyboard/accessibility tree. */
++.ews-evidence {
++  display: flex;
++  align-items: flex-start;
++  justify-content: space-between;
++  gap: 18px;
++  padding: 16px;
++  margin: 14px 0;
++  background: var(--surface, #f6f9fb);
++  border: 1px solid var(--border);
++  border-left: 3px solid #3387a2;
++  border-radius: 8px;
++}
++.ews-evidence strong,
++.review-checklist legend {
++  font-size: 13px;
++  font-weight: 750;
++}
++.ews-evidence p,
++.ews-evidence small {
++  display: block;
++  margin: 8px 0 0;
++  font-size: 11px;
++  line-height: 1.65;
++}
++.ews-evidence .count-pill {
++  flex-shrink: 0;
++  white-space: nowrap;
++}
++.review-checklist {
++  border: 1px solid var(--border);
++  border-radius: 8px;
++  margin: 14px 0;
++  padding: 16px;
++}
++.review-checklist legend {
++  padding: 0 5px;
++}
++.review-checklist label {
++  display: flex;
++  align-items: flex-start;
++  gap: 10px;
++  margin: 12px 0;
++  font-size: 11px;
++  line-height: 1.5;
++  cursor: pointer;
++}
++.review-checklist input {
++  margin: 2px 0 0;
++  flex: 0 0 auto;
++  width: 16px;
++  height: 16px;
++  accent-color: #196f80;
++}
++.review-checklist small {
++  display: block;
++  font-size: 10px;
++  line-height: 1.6;
++}
++@media (max-width: 600px) {
++  .ews-evidence {
++    display: block;
++    padding: 13px;
++  }
++  .ews-evidence .count-pill {
++    display: inline-block;
++    margin-top: 10px;
++    white-space: normal;
++  }
++}
+ @media (max-width: 800px) {
+   .sidebar {
+     visibility: hidden;
+--- a/tests/api.test.ts
++++ b/tests/api.test.ts
+@@ -8,6 +8,11 @@
+     headers: { "content-type": "application/json", "x-demo-role": role },
+     ...(body ? { body: JSON.stringify(body) } : {}),
+   });
++const completeReview = {
++  dataChecked: true,
++  areaChecked: true,
++  messageChecked: true,
++};
+ describe("API stateless Netlify", () => {
+   for (const path of [
+     "/health",
+@@ -54,17 +59,74 @@
+           await handleApi(
+             req(
+               "/alerts/verify",
+-              { basinId: "tamiang", alert: makeAlert(BASINS[0], "Awas", 0.9) },
++              {
++                basinId: "tamiang",
++                alert: makeAlert(BASINS[0], "Awas", 0.9),
++                review: completeReview,
++              },
+               role,
+             ),
+           )
+         ).status,
+       ).toBe(403));
++  it("verifikasi membutuhkan tiga pemeriksaan dan membawa snapshot bukti", async () => {
++    const alert = makeAlert(BASINS[0], "Awas", 0.9, 2, {
++      rain: 220,
++      forestLoss: 61,
++      slope: 36,
++      water: 500,
++    });
++    const base = { basinId: "tamiang", alert };
++    const incomplete = await handleApi(
++      req(
++        "/alerts/verify",
++        { ...base, review: { ...completeReview, areaChecked: false } },
++        "bpbd",
++      ),
++    );
++    expect(incomplete.status).toBe(400);
++    const nonBoolean = await handleApi(
++      req(
++        "/alerts/verify",
++        { ...base, review: { ...completeReview, dataChecked: "true" } },
++        "bpbd",
++      ),
++    );
++    expect(nonBoolean.status).toBe(400);
++    const verified = await handleApi(
++      req("/alerts/verify", { ...base, review: completeReview }, "bpbd"),
++    );
++    expect(verified.status).toBe(200);
++    const result = await verified.json();
++    expect(result.alert.review).toEqual(completeReview);
++    expect(result.alert.evidence.inputs.rain).toBe(220);
++    expect(result.alert.evidence.factors).toHaveLength(4);
++    expect(result.persisted).toBe(false);
++  });
++  it("status verified yang dipalsukan tanpa checklist tidak dapat diseminasi", async () => {
++    const alert = {
++      ...makeAlert(BASINS[0], "Awas", 0.9),
++      status: "verified",
++      verifiedBy: "bpbd",
++    };
++    expect(
++      (
++        await handleApi(
++          req(
++            "/disseminate",
++            { basinId: "tamiang", alert, mode: "limited" },
++            "bpbd",
++          ),
++        )
++      ).status,
++    ).toBe(400);
++  });
+   it("mode bayangan memblokir diseminasi meskipun sudah diverifikasi", async () => {
+     const alert = {
+       ...makeAlert(BASINS[0], "Awas", 0.9),
+       status: "verified",
+       verifiedBy: "bpbd",
++      review: completeReview,
+     };
+     expect(
+       (
+@@ -95,6 +157,7 @@
+       ...makeAlert(BASINS[0], "Awas", 0.9),
+       status: "verified",
+       verifiedBy: "bpbd",
++      review: completeReview,
+     };
+     const r = await handleApi(
+       req(

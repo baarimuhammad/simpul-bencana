@@ -95,6 +95,16 @@ export interface Alert {
   status: "draft" | "verified" | "sent";
   created: string;
   verifiedBy?: Role;
+  review?: {
+    dataChecked: boolean;
+    areaChecked: boolean;
+    messageChecked: boolean;
+  };
+  evidence: {
+    inputs: Inputs;
+    factors: Factor[];
+    sourceStatus: "fixture";
+  };
   channels: Channel[];
   message: string;
 }
@@ -106,7 +116,7 @@ export interface AuditEvent {
   detail: string;
 }
 export interface DemoState {
-  version: 1;
+  version: 2;
   role: Role | null;
   mode: Mode;
   reports: CitizenReport[];

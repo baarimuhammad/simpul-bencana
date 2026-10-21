@@ -1,6 +1,7 @@
 import { CHANNELS } from "./types.ts";
 import { SIM_TIME } from "./seed.ts";
-import type { Alert, Basin, Level } from "./types.ts";
+import { fuse } from "./fusion.ts";
+import type { Alert, Basin, Inputs, Level } from "./types.ts";
 export function alertMessage(basin: Basin, level: Level) {
   return `LATIHAN / DATA SIMULASI — ${level.toUpperCase()}: potensi banjir dan longsor di DAS ${basin.name}, ${basin.province}. Warga ${basin.districts[0].name} diminta menjauhi sungai dan lereng, menyiapkan tas siaga, serta mengikuti arahan petugas BPBD menuju ${basin.shelters[0].name}. Bantu kelompok rentan. Jangan melintasi arus air. Ini bukan peringatan bencana aktual.`;
 }
@@ -9,6 +10,7 @@ export function makeAlert(
   level: Level,
   probability: number,
   index = 1,
+  inputs: Inputs = basin.inputs,
 ): Alert {
   return {
     id: `SB-SIM-${String(index).padStart(3, "0")}`,
@@ -17,6 +19,11 @@ export function makeAlert(
     probability,
     status: "draft",
     created: SIM_TIME,
+    evidence: {
+      inputs: { ...inputs },
+      factors: fuse(basin, inputs).factors,
+      sourceStatus: "fixture",
+    },
     channels: CHANNELS.map((name, i) => ({
       id: `ch-${i}`,
       name,

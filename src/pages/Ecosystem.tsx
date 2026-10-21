@@ -131,6 +131,70 @@ function Interoperability() {
         data pemerintah.
       </Note>
       <Panel
+        title="Status asal data pada prototipe"
+        eyebrow="BUKTI KONEKSI · BUKAN KLAIM REAL-TIME"
+      >
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Instansi yang diusulkan</th>
+                <th>Yang dijalankan hari ini</th>
+                <th>Integrasi aktual</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                [
+                  "Hujan 24 jam",
+                  "BMKG",
+                  "Deret angka fixture dengan seed 2026",
+                ],
+                [
+                  "Degradasi tutupan hulu",
+                  "Kementerian Kehutanan (sebelumnya KLHK)",
+                  "Angka fixture; bukan raster satelit",
+                ],
+                [
+                  "Tinggi muka air",
+                  "KemenPU",
+                  "Angka fixture; bukan pembacaan pos",
+                ],
+                [
+                  "Lereng / referensi DAS",
+                  "BIG",
+                  "Lereng fixture; peta dasar Natural Earth",
+                ],
+                [
+                  "Laporan & keputusan",
+                  "BPBD / BNPB",
+                  "Peran dan log dalam sesi peramban",
+                ],
+              ].map(([parameter, owner, current]) => (
+                <tr key={parameter}>
+                  <td>
+                    <strong>{parameter}</strong>
+                  </td>
+                  <td>{owner}</td>
+                  <td>{current}</td>
+                  <td>
+                    <span className="status-pill pending">
+                      Belum tersambung
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="small-text">
+          Endpoint <code>/api/*</code> adalah handler simulasi milik prototipe,
+          bukan API BMKG, Kemenhut, KemenPU, BIG, atau BNPB. “Koneksi aktif”
+          pada katalog berarti alur fixture internal.
+        </p>
+      </Panel>
+      <Panel
         title="Katalog sumber data"
         eyebrow="KONTRAK & KUALITAS · SELURUH NILAI SIMULASI"
         action={
@@ -653,34 +717,66 @@ function Architecture() {
             keluaran identik; replay tidak mengakumulasi bukti yang sama.
           </Note>
         </Panel>
-        <Panel title="Saat beralih ke data nyata" eyebrow="AGENDA PENELITIAN">
+        <Panel
+          title="Input → proses → keluaran"
+          eyebrow="JAWABAN METODE UNTUK JURI"
+        >
           <ol className="plain-list">
             <li>
-              Ganti fixture dengan adapter API resmi yang disepakati pemilik
-              data.
+              <strong>Input:</strong> hujan 24 jam (mm), degradasi hulu (%),
+              kemiringan (°), muka air (cm), prior DAS, laporan warga
+              tervalidasi. Semua nilai fixture.
             </li>
             <li>
-              Validasi CRS, unit, resolusi, waktu observasi, dan kebaruan data.
+              <strong>Penyelarasan:</strong> satu ID DAS dan waktu replay 30
+              menit; unit dibatasi sesuai skala sintetik. Tidak ada resampling
+              raster atau pemeriksaan data hilang yang sungguhan.
             </li>
             <li>
-              Latih model temporal dan spasial dengan pemisahan data per
-              kejadian dan DAS.
+              <strong>Fusi:</strong> empat fitur dinormalisasi, bobot aturan
+              kontekstual dijumlahkan, interaksi hujan–lahan ditambah dan
+              retensi dikurangkan. Bukti menggeser log-odds prior secara analog
+              Bayesian.
             </li>
             <li>
-              Kalibrasi prior, likelihood, ambang, serta mekanisme data hilang
-              dan bukti berulang.
-            </li>
-            <li>
-              Uji bias wilayah, kalibrasi probabilitas, ketidakpastian, dan
-              kegunaan penjelasan.
-            </li>
-            <li>
-              Terapkan identitas, otorisasi, penyimpanan aman, persetujuan SOP,
-              dan audit independen.
+              <strong>Keluaran:</strong> skor, probabilitas pedagogis, level
+              bertingkat dan kontribusi per faktor; draf EWS menyimpan snapshot
+              input agar dapat ditinjau BPBD.
             </li>
           </ol>
+          <Note tone="warning">
+            Bobot bukan parameter attention terlatih. Rasio bukti bukan
+            likelihood yang diestimasi dari data kejadian; probabilitas belum
+            dikalibrasi dan tidak boleh dipakai untuk keselamatan.
+          </Note>
         </Panel>
       </div>
+      <Panel title="Saat beralih ke data nyata" eyebrow="AGENDA PENELITIAN">
+        <ol className="plain-list">
+          <li>
+            Ganti fixture dengan adapter API resmi yang disepakati pemilik data.
+          </li>
+          <li>
+            Validasi CRS, unit, resolusi, waktu observasi, dan kebaruan data.
+          </li>
+          <li>
+            Latih model temporal dan spasial dengan pemisahan data per kejadian
+            dan DAS.
+          </li>
+          <li>
+            Kalibrasi prior, likelihood, ambang, serta mekanisme data hilang dan
+            bukti berulang.
+          </li>
+          <li>
+            Uji bias wilayah, kalibrasi probabilitas, ketidakpastian, dan
+            kegunaan penjelasan.
+          </li>
+          <li>
+            Terapkan identitas, otorisasi, penyimpanan aman, persetujuan SOP,
+            dan audit independen.
+          </li>
+        </ol>
+      </Panel>
     </>
   );
 }
@@ -844,6 +940,60 @@ function About() {
         <Network size={180} className="about-decoration" />
       </div>
       <Panel
+        title="Jejak proposal → demonstrasi → bukti"
+        eyebrow="MATRIKS KESESUAIAN KONSEP"
+      >
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Konsep proposal</th>
+                <th>Yang diperagakan</th>
+                <th>Bukti dalam prototipe</th>
+                <th>Yang belum terbukti</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                [
+                  "Interoperabilitas data",
+                  "Katalog pemilik, kontrak, query per DAS",
+                  "Endpoint /api/catalog, /api/risk dan log pertukaran fixture",
+                  "Belum ada perjanjian, adapter, atau API instansi",
+                ],
+                [
+                  "AI Fusion multi-parameter",
+                  "Empat input, bobot aturan, prior → bukti → posterior",
+                  "Slider, kontribusi dan tes skenario deterministik",
+                  "Belum ada model LSTM/CNN terlatih atau kalibrasi",
+                ],
+                [
+                  "Pemetaan risiko",
+                  "Peta delapan DAS dengan layer ilustratif",
+                  "Status, faktor, kecamatan dan paparan dummy",
+                  "Bukan batas DAS resmi atau peta risiko tervalidasi",
+                ],
+                [
+                  "Early Warning System",
+                  "Rekomendasi → checklist BPBD → kanal latihan",
+                  "Snapshot draf, verifikasi, blok mode bayangan, CAP Test",
+                  "Belum mengirim peringatan ke publik",
+                ],
+              ].map(([concept, feature, evidence, gap]) => (
+                <tr key={concept}>
+                  <td>
+                    <strong>{concept}</strong>
+                  </td>
+                  <td>{feature}</td>
+                  <td>{evidence}</td>
+                  <td>{gap}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+      <Panel
         title="Roadmap implementasi"
         eyebrow="ACUAN UTAMA: BAB 2.4 · 60 BULAN"
       >
@@ -924,32 +1074,60 @@ function About() {
           </div>
         </Panel>
         <Panel
-          title="Posisi kebaruan gagasan"
-          eyebrow="PEMBANDING KONSEPTUAL, BUKAN AUDIT PRODUK"
+          title="Kebaruan sebagai hipotesis kontribusi"
+          eyebrow="MELENGKAPI EKOSISTEM YANG SUDAH ADA"
         >
           <div className="comparison-about">
-            <h3>Portal Satu Data Bencana</h3>
+            <h3>BMKG · sumber cuaca dan peringatan</h3>
             <p>
-              Gagasan melengkapi fungsi pertukaran dan penyajian data dengan
-              fusi lintas parameter, penjelasan risiko, serta alur keputusan
-              daerah.
+              BMKG sudah menyediakan informasi dan peringatan cuaca, termasuk
+              pendekatan berbasis dampak. SIMPUL mengusulkan agar sinyal ini
+              dibaca bersama kondisi hulu dan respons sungai pada tingkat DAS;
+              tidak menggantikan kewenangan BMKG.
             </p>
-            <h3>IDRIP</h3>
+            <h3>InaRISK · pengetahuan risiko wilayah</h3>
             <p>
-              Mengadaptasi prinsip penguatan interoperabilitas dan peringatan
-              dini ke domain hidrometeorologi yang memiliki karakter data
-              beragam.
+              InaRISK BNPB menampilkan informasi bahaya/risiko dan rekomendasi
+              mitigasi. SIMPUL mengusulkan pelengkap berupa pembaruan
+              multi-parameter pada replay, alasan level, dan alur rekomendasi ke
+              verifikasi BPBD; ini belum membuktikan keunggulan atas InaRISK.
             </p>
-            <h3>SIMPUL BENCANA</h3>
+            <h3>IDRIP · penguatan sistem peringatan</h3>
             <p>
-              Fusi hujan–lahan–topografi–hidrologi, bobot kontekstual DAS,
-              pembaruan bukti, dan diseminasi dengan verifikasi BPBD.
+              Pengalaman IDRIP pada pemantauan dan diseminasi gempa–tsunami
+              menjadi rujukan tata kelola. Proposal ini berfokus pada fusi
+              hujan–lahan–lereng–muka air untuk banjir/longsor, dengan evaluasi
+              tersendiri yang belum dilakukan.
             </p>
           </div>
           <p className="small-text">
-            Uraian ini adalah posisi yang diajukan proposal, bukan pernyataan
-            terverifikasi tentang seluruh kemampuan portal atau program
-            pembanding.
+            Kebaruan adalah kombinasi dan alur kerja yang{" "}
+            <strong>diusulkan</strong>, bukan klaim fitur tersebut tidak ada di
+            sistem lain atau sudah lebih cepat/akurat. Rujukan resmi:{" "}
+            <a
+              href="https://www.bmkg.go.id/cuaca/potensi-cuaca-ekstrem"
+              target="_blank"
+              rel="noreferrer"
+            >
+              BMKG cuaca
+            </a>{" "}
+            ·{" "}
+            <a
+              href="https://inarisk.bnpb.go.id/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              InaRISK BNPB
+            </a>{" "}
+            ·{" "}
+            <a
+              href="https://www.bmkg.go.id/berita/utama/menutup-idrip-peringatan-dini-gempa-tsunami-kini-maksimum-3-menit-akurasi-90"
+              target="_blank"
+              rel="noreferrer"
+            >
+              BMKG tentang IDRIP
+            </a>
+            .
           </p>
           <div className="sdg-row">
             {[

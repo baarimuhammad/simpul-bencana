@@ -55,7 +55,7 @@ Untuk proyek yang sudah terhubung, CLI memakai asosiasi lokal di `.netlify` (dia
 - **Peta risiko:** GeoJSON lokal, pilih DAS, zoom, empat lapisan ilustratif, kecamatan, paparan, kapasitas dan rencana rute evakuasi dummy.
 - **Laboratorium fusi:** tiga preset, replay 11 titik waktu × 30 menit, interval tampilan 1,6 detik, slider manual, timeline berdampingan, kontribusi skor, prior/rasio bukti/posterior.
 - **Posko BPBD:** kesiapan kecamatan, paparan, titik kumpul, alur keputusan dan mode uji coba.
-- **Peringatan:** draf → verifikasi BPBD → latihan diseminasi tujuh kanal. Mode bayangan diblokir di UI dan API. Radio sengaja memerlukan retry pertama; percobaan ulang berhasil.
+- **Peringatan:** snapshot input dan faktor pada draf → tiga pemeriksaan BPBD → latihan diseminasi tujuh kanal. Mode bayangan diblokir di UI dan API. Radio sengaja memerlukan retry pertama; percobaan ulang berhasil.
 - **Laporan warga:** tanpa identitas, antrean validasi, laporan tervalidasi memperbarui risiko; laporan pending/rejected tidak memengaruhinya.
 - **Interoperabilitas:** katalog lima sumber, metadata, kepemilikan data, fixture log federasi, log panggilan API sesi, API tester dan unduh OpenAPI.
 - **Evaluasi bayangan:** confusion matrix, precision, recall, false alarm rate, lead time dari 33 observasi sintetis; semua rumus dan label dipaparkan.
@@ -88,11 +88,11 @@ Kontribusi yang ditampilkan adalah **poin skor sebelum sigmoid**, bukan kontribu
 | Hujan Ekstrem + Hulu Gundul | Berawal Waspada karena kerentanan hulu, berkembang ke Awas; sinyal Siaga mendahului pembanding berbasis hujan |
 | Alarm Palsu                 | Hujan sempat melewati ambang pembanding, tetapi fusi tetap Normal karena hulu terjaga dan muka air rendah     |
 
-Pembanding “Sistem terpisah saat ini” adalah aturan buatan: hujan ≥180 mm/24 jam memicu alarm, dengan koordinasi manual dijelaskan secara naratif. **Bukan pengukuran sistem aktual BMKG/BNPB**. Penanda kejadian ekstrem buatan T+240 menit. Metrik evaluasi memakai label bahaya horizon sejak T+150 menit; ini sengaja membuat metrik tidak identik dengan penanda kejadian. Tiga replay ×11 snapshot =33 sampel berkorelasi, bukan set uji independen.
+Pembanding “Pembanding terpisah (hipotetis)” adalah aturan buatan: hujan ≥180 mm/24 jam memicu alarm, dengan koordinasi manual dijelaskan secara naratif. **Bukan pengukuran sistem aktual BMKG/BNPB**. Penanda kejadian ekstrem buatan T+240 menit. Metrik evaluasi memakai label bahaya horizon sejak T+150 menit; ini sengaja membuat metrik tidak identik dengan penanda kejadian. Tiga replay ×11 snapshot =33 sampel berkorelasi, bukan set uji independen.
 
 ## Data, penyimpanan, dan peran
 
-Seed tetap `2026`. Waktu simulasi dasar 21 Oktober 2026 pukul 08.00 WIB. Fixture dibuat dengan PRNG Mulberry32 dan konstanta; bukan data lapangan. Timestamp log bertambah berdasarkan urutan tindakan simulasi. Sesi demo disimpan hanya dalam `localStorage` dengan kunci `simpul-demo-v1`. Perangkat/peramban lain tidak berbagi perubahan. Reset tersedia untuk Admin Nasional melalui Audit & hak akses; bila localStorage tidak tersedia aplikasi tetap bekerja tanpa persistensi.
+Seed tetap `2026`. Waktu simulasi dasar 21 Oktober 2026 pukul 08.00 WIB. Fixture dibuat dengan PRNG Mulberry32 dan konstanta; bukan data lapangan. Timestamp log bertambah berdasarkan urutan tindakan simulasi. Sesi demo disimpan hanya dalam `localStorage` dengan kunci `simpul-demo-v2`. Versi ini mereset sesi v1 sekali agar draf lama yang belum memiliki snapshot bukti tidak ikut terbaca. Perangkat/peramban lain tidak berbagi perubahan. Reset tersedia untuk Admin Nasional melalui Audit & hak akses; bila localStorage tidak tersedia aplikasi tetap bekerja tanpa persistensi.
 
 Enam peran: Admin Nasional BNPB, Operator BMKG, Operator Kemenhut/KLHK, Operator KemenPU/BIG, BPBD Daerah, Publik. Peran operator dapat memeriksa katalog/model tetapi tidak memverifikasi atau mendiseminasikan peringatan. Admin dan BPBD dapat memverifikasi, memvalidasi laporan dan mengganti mode. Publik dapat membaca risiko/peringatan dan mengirim laporan dummy.
 
@@ -153,7 +153,7 @@ Peta/grafik berada pada modul lazy, GeoJSON dibaca hanya saat diperlukan, dan js
 - Pentahelix dibuat eksplisit menjadi pemerintah, akademisi, dunia usaha, masyarakat, media. Tidak menyiratkan komitmen kelembagaan nyata.
 - Statistik latar proposal tidak dipakai pada KPI kinerja aplikasi; rujukan proposal ditampilkan di Tentang sebagai rujukan yang memerlukan verifikasi tersendiri.
 - Keputusan sederhana: database dan Blobs tidak dibutuhkan untuk demo satu perangkat; tidak ada seed/migrasi server yang harus dikelola.
-- Halaman laboratorium mempertahankan preset selama kunjungan halaman; meninggalkan halaman mereset replay. Draf yang diteruskan ke BPBD menyimpan snapshot level/probabilitas dan pesan hasil slider/replay saat itu. Dasbor tetap menampilkan snapshot pemantauan awal + bukti warga tervalidasi.
+- Halaman laboratorium mempertahankan preset selama kunjungan halaman; meninggalkan halaman mereset replay. Draf yang diteruskan ke BPBD menyimpan snapshot input, faktor, level/probabilitas dan pesan hasil slider/replay saat itu. Checklist adalah catatan latihan pada payload, bukan bukti pemeriksaan lapangan atau autentikasi BPBD. Dasbor tetap menampilkan snapshot pemantauan awal + bukti warga tervalidasi.
 
 ## Untuk menggunakan data nyata
 

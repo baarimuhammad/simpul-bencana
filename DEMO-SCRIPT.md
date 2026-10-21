@@ -20,7 +20,7 @@ Jalankan `npm run dev`, atau buka hasil deploy Netlify. Pilih Admin Nasional BNP
 
 **Narasi:** “Kami tidak mengusulkan sensor baru atau memindahkan seluruh data ke BNPB. Dalam rancangan nyata, data tetap di instansi dan di-query melalui kontrak API bersama. Yang disatukan adalah referensi waktu, wilayah, kualitas, dan pemahamannya.”
 
-**Aksi:** tunjukkan diagram federasi, pemilik data, format/frekuensi dan metadata. Pilih endpoint `/risk?basin=tamiang&scenario=extreme&step=8`, klik **Uji endpoint**. Jelaskan bahwa endpoint benar-benar bekerja dengan data dummy; koneksi pemerintah belum diaktifkan.
+**Aksi:** tunjukkan tabel **Status asal data pada prototipe**, diagram federasi, pemilik data, format/frekuensi dan metadata. Pilih endpoint `/risk?basin=tamiang&scenario=extreme&step=8`, klik **Uji endpoint**. Jelaskan bahwa endpoint benar-benar bekerja dengan data dummy; koneksi pemerintah belum diaktifkan.
 
 ## 1:15–2:35 · Adegan kunci: dari hujan menjadi penjelasan risiko
 
@@ -42,7 +42,7 @@ Jalankan `npm run dev`, atau buka hasil deploy Netlify. Pilih Admin Nasional BNP
 
 **Narasi:** “Analisis memberi rekomendasi; BPBD memegang keputusan. Pada mode bayangan, sistem hanya mengamati. Tombol pengiriman diblokir, termasuk oleh API.”
 
-**Aksi:** klik **Verifikasi BPBD**. Tunjukkan bahwa diseminasi masih diblokir. Ubah ke **Operasional terbatas**, klik **Simulasikan diseminasi**.
+**Aksi:** tunjukkan snapshot input dan dua faktor utama pada draf. Centang tiga pemeriksaan data, area, dan pesan setelah menerangkan bahwa semua pemeriksaan ini latihan pada fixture; klik **Verifikasi BPBD**. Tunjukkan bahwa diseminasi masih diblokir. Ubah ke **Operasional terbatas**, klik **Simulasikan diseminasi**.
 
 **Narasi:** “Setelah verifikasi dan hanya dalam latihan operasional terbatas, peringatan berisi instruksi Bahasa Indonesia yang dapat ditindaklanjuti. Tujuh kanal disimulasikan: SMS, cell broadcast, aplikasi, sirene, radio komunitas, pengeras suara desa, dan media sosial. Tidak ada pesan aktual yang dikirim.”
 
@@ -62,7 +62,7 @@ Jalankan `npm run dev`, atau buka hasil deploy Netlify. Pilih Admin Nasional BNP
 
 **Narasi:** “Di tahap uji coba, prediksi perlu dibandingkan dengan kejadian. Metrik di layar dihitung dari data sintetis; ini belum menunjukkan kelayakan operasional. Model harus diuji independen dan dikalibrasi pada setiap DAS.”
 
-**Aksi:** tunjukkan empat tahap roadmap: Persiapan 1–12, Integrasi 13–30, Uji coba 31–42, Evaluasi 43–60 bulan. Tunjukkan pentahelix dan SDGs.
+**Aksi:** buka Arsitektur Model sekilas untuk menunjuk input → proses → keluaran; lalu Tentang untuk matriks proposal → demonstrasi → batas bukti, posisi terhadap BMKG/InaRISK, dan empat tahap roadmap: Persiapan 1–12, Integrasi 13–30, Uji coba 31–42, Evaluasi 43–60 bulan. Tunjukkan pentahelix dan SDGs bila waktu cukup.
 
 **Penutup:** “Kebaruan yang kami ajukan adalah lapisan pemahaman lintas data: kepemilikan tetap pada instansi, hasil dapat dijelaskan, keputusan tetap pada manusia, dan respons menjangkau masyarakat lewat banyak kanal.”
 
@@ -79,5 +79,5 @@ Setelah dependensi terpasang, jalankan lokal. Peta, seed dan model tidak membutu
 - **“Apakah akurasinya sudah terbukti?”** Belum. Metrik hanya berasal dari fixture dan belum mewakili performa nyata.
 - **“Apakah data instansi sudah terhubung?”** Belum; kontrak, katalog dan API diperagakan dengan data dummy. Koneksi resmi memerlukan kerja sama institusi.
 - **“Apakah ini melatih AI?”** Tidak. Arsitektur penelitian dijelaskan terpisah; prototipe menggunakan scoring transparan.
-- **“Apa bedanya dengan portal data?”** Gagasan menekankan pemaduan parameter menjadi risiko yang dapat dijelaskan dan alur keputusan BPBD, sebagai pelengkap ekosistem yang ada.
+- **“Apa bedanya dengan BMKG dan InaRISK?”** BMKG menyediakan sinyal dan peringatan cuaca; InaRISK menyajikan pengetahuan risiko wilayah. Usulan SIMPUL memadukan sinyal cuaca, kondisi hulu, lereng, dan muka air per DAS menjadi rekomendasi yang dapat ditelusuri sampai keputusan BPBD. Ini hipotesis kontribusi, belum bukti lebih baik atau lebih cepat.
 - **“Mengapa ada dua durasi dalam laporan?”** Demo mengikuti Bab 2.4 (60 bulan). Perbedaan Bab 3.2 (120 bulan) perlu diselaraskan pada revisi naskah proposal.
